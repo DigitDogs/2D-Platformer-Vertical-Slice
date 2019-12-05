@@ -1,9 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private AudioSource jumpSound;
+
+    [SerializeField]
+    private Collider2D playerCollider;
+
     [SerializeField]
     private int speed, jumpPower;
 
@@ -12,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    private bool isFacingRight, isJumping = false;
+    private bool isFacingRight, isJumping = false, hitWallRight, hitWallLeft;
 
     private Animator animator;
 
@@ -29,31 +35,83 @@ public class PlayerMovement : MonoBehaviour
         {
             animator = this.gameObject.GetComponent<Animator>();
         }
+
+        // Searches for the jump audio source in the children
+        if (this.gameObject.GetComponentInChildren<AudioSource>() != null)
+        {
+            jumpSound = this.gameObject.GetComponentInChildren<AudioSource>();
+        }
     }
 
     private void Update()
     {
         horizontalMove = Input.GetAxisRaw("Horizontal");
 
+        // Sets all the variables for the animationss
+        animator.SetBool("HitWallLeft", hitWallLeft);
+        animator.SetBool("HitWallRight", hitWallRight);
         animator.SetBool("IsJumping", isJumping);
         animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
     }
 
     private void FixedUpdate()
     {
+        #region Ground check
         // Sends a raycast under the player to the ground
-        RaycastHit2D hit = Physics2D.Raycast(this.gameObject.transform.position - new Vector3(0,2,0), -Vector2.up, 0.1f);
+        RaycastHit2D hit = Physics2D.Raycast(this.gameObject.transform.position - new Vector3(0,2.1f,0), -Vector2.up, 0.3f);
         bool isGrounded = hit.collider;
+
+        Debug.Log("Is grounded: " + isGrounded);
 
         // Checks if the player is grounded and sets isJumping to false if the player is on the ground
         if (isGrounded)
         {
             isJumping = false;
         }
+        else
+        {
+            isJumping = true;
+        }
+        #endregion
+
+        #region Wall Detection
+        // Sends 2 raycasts to the left and right to detect collision with walls so you stop moving
+
+        RaycastHit2D wallHitTopR = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(1.2f, 0.75f, 0), -Vector2.right, 0.1f);
+        bool hitWallRightTop = wallHitTopR.collider;
+        RaycastHit2D wallHitMidR = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(1.2f, -1f, 0), -Vector2.right, 0.1f);
+        bool hitWallRightMid = wallHitMidR.collider;
+
+        if(hitWallRightTop || hitWallRightMid)
+        {
+            hitWallRight = true;
+        }
+        else
+        {
+            hitWallRight = false;
+        }
+
+        RaycastHit2D wallHitTopL = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(-1.2f, 0.75f, 0), Vector2.right, 0.1f);
+        bool hitWallLeftTop = wallHitTopL.collider;
+        RaycastHit2D wallHitMidL = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(-1.2f, -1f, 0), Vector2.right, 0.1f);
+        bool hitWallLeftMid = wallHitMidL.collider;
+
+        if(hitWallLeftTop || hitWallLeftMid)
+        {
+            hitWallLeft = true;
+        }
+        else
+        {
+            hitWallLeft = false;
+        }
+
+        Debug.Log("Hit wall left: " + hitWallLeft);
+        Debug.Log("Hit wall right: " + hitWallRight);
+        #endregion
 
         #region Movement
         // Makes the player move to the left
-        if (horizontalMove == -1f)
+        if (horizontalMove == -1f && hitWallLeft != true)
         {
             rb.velocity = new Vector2(speed * -1, rb.velocity.y);
 
@@ -64,7 +122,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         // Makes the player move to the right
-        else if (horizontalMove == 1)
+        else if (horizontalMove == 1 && hitWallRight != true)
         {
             rb.velocity = new Vector2(speed * 1, rb.velocity.y);
 
@@ -95,8 +153,10 @@ public class PlayerMovement : MonoBehaviour
         // Checks if the player is jumping
         if (isJumping == false)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpPower * 10);
+            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
             isJumping = true;
+
+            jumpSound.Play();
         }
     }
 }
