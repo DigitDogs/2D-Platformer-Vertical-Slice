@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    private bool isFacingRight, isJumping = false, hitWallRight, hitWallLeft;
+    private bool isFacingRight, isJumping = false, isGrounded, hitWallRight, hitWallLeft;
 
     private Animator animator;
 
@@ -57,20 +57,26 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         #region Ground check
-        // Sends a raycast under the player to the ground
-        RaycastHit2D hit = Physics2D.Raycast(this.gameObject.transform.position - new Vector3(0,2.1f,0), -Vector2.up, 0.3f);
-        bool isGrounded = hit.collider;
+        // Sends 2 raycasts under the player to the ground to see if the player is gorunded
+        RaycastHit2D botRight = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(0.8f, -2.1f, 0), -Vector2.up, 0.3f);
+        bool botRightIsGrounded = botRight.collider;
+        RaycastHit2D botLeft = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(-0.8f, -2.1f, 0), -Vector2.up, 0.3f);
+        bool botLeftIsGrounded = botLeft.collider;
 
-        Debug.Log("Is grounded: " + isGrounded);
-
-        // Checks if the player is grounded and sets isJumping to false if the player is on the ground
-        if (isGrounded)
+        if (botLeftIsGrounded || botRightIsGrounded)
         {
-            isJumping = false;
+            isGrounded = true;
         }
         else
         {
-            isJumping = true;
+            isGrounded = false;
+        }
+
+        Debug.Log("Is grounded: " + isGrounded);
+        
+        if (isGrounded)
+        {
+            isJumping = false;
         }
         #endregion
 
