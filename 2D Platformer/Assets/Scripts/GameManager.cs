@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // Sets score back to 0
+        score = 0;
+
         // Checks if there is a spawnpoint
         if (GameObject.FindWithTag("Spawnpoint") != null)
         {
