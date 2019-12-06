@@ -23,9 +23,4 @@ public class GameManager : MonoBehaviour
             Instantiate(player, spawn.transform);
         }
     }
-    
-    void Update()
-    {
-        
-    }
 }

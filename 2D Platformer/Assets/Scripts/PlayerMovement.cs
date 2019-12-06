@@ -8,9 +8,6 @@ public class PlayerMovement : MonoBehaviour
     private AudioSource jumpSound;
 
     [SerializeField]
-    private Collider2D playerCollider;
-
-    [SerializeField]
     private int speed, jumpPower;
 
     [SerializeField]
@@ -47,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontalMove = Input.GetAxisRaw("Horizontal");
 
-        // Sets all the variables for the animationss
+        // Sets all the variables for the animations
         animator.SetBool("HitWallLeft", hitWallLeft);
         animator.SetBool("HitWallRight", hitWallRight);
         animator.SetBool("IsJumping", isJumping);
@@ -58,9 +55,9 @@ public class PlayerMovement : MonoBehaviour
     {
         #region Ground check
         // Sends 2 raycasts under the player to the ground to see if the player is gorunded
-        RaycastHit2D botRight = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(0.8f, -2.1f, 0), -Vector2.up, 0.3f);
+        RaycastHit2D botRight = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(0.6f, -2f, 0), -Vector2.up, 0.1f);
         bool botRightIsGrounded = botRight.collider;
-        RaycastHit2D botLeft = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(-0.8f, -2.1f, 0), -Vector2.up, 0.3f);
+        RaycastHit2D botLeft = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(-0.6f, -2f, 0), -Vector2.up, 0.1f);
         bool botLeftIsGrounded = botLeft.collider;
 
         if (botLeftIsGrounded || botRightIsGrounded)
@@ -85,7 +82,7 @@ public class PlayerMovement : MonoBehaviour
 
         RaycastHit2D wallHitTopR = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(1.2f, 0.75f, 0), -Vector2.right, 0.1f);
         bool hitWallRightTop = wallHitTopR.collider;
-        RaycastHit2D wallHitMidR = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(1.2f, -1f, 0), -Vector2.right, 0.1f);
+        RaycastHit2D wallHitMidR = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(1.2f, -1.1f, 0), -Vector2.right, 0.1f);
         bool hitWallRightMid = wallHitMidR.collider;
 
         if(hitWallRightTop || hitWallRightMid)
@@ -99,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
 
         RaycastHit2D wallHitTopL = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(-1.2f, 0.75f, 0), Vector2.right, 0.1f);
         bool hitWallLeftTop = wallHitTopL.collider;
-        RaycastHit2D wallHitMidL = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(-1.2f, -1f, 0), Vector2.right, 0.1f);
+        RaycastHit2D wallHitMidL = Physics2D.Raycast(this.gameObject.transform.position + new Vector3(-1.2f, -1.1f, 0), Vector2.right, 0.1f);
         bool hitWallLeftMid = wallHitMidL.collider;
 
         if(hitWallLeftTop || hitWallLeftMid)

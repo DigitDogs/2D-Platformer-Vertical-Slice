@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Ground
   - Spawnpoint
+  - Music
+  - Gem
+  - PickupSoundEffect
   layers:
   - Default
   - TransparentFX
