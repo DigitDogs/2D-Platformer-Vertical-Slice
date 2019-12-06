@@ -7,6 +7,8 @@ public class Gem : MonoBehaviour
 {
     private AudioSource gemSoundEffect;
 
+    private bool pickedUp = false;
+
     private void Start()
     {
         // Searches and attaches the coin sound effect
@@ -20,11 +22,24 @@ public class Gem : MonoBehaviour
     {
         Debug.Log("TRIGERED");
 
-        // Looks if collision is the player and plays sound effect
-        if (collision.gameObject.CompareTag("Player"))
+        // Looks if the player collided and a small safety feature for multiple hits
+        if (collision.gameObject.CompareTag("Player") && pickedUp == false)
         {
-            gemSoundEffect.Play();
-            Destroy(this.gameObject);
+            pickedUp = true;
+            PickedUp();
         }
+    }
+
+    /// <summary>
+    /// Plays sound effect, adds 1 point to the score in the GameManager and destroys this gameobject.
+    /// </summary>
+    private void PickedUp()
+    {
+
+        // adds 1 to score in the GameManager
+        GameManager.score++;
+
+        gemSoundEffect.Play();
+        Destroy(this.gameObject);
     }
 }

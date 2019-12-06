@@ -142,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
         }
         #endregion
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButton("Jump"))
         {
             Jump();
         }
